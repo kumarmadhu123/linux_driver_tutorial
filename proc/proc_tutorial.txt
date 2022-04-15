@@ -1,0 +1,347 @@
+This is to discuss proc file system in Linux
+
+/proc : Is virtual Filesystem that is created everytime system start ups
+	|
+	|_Contains information related to ongoing process , memory management 
+	|
+	|_Also contains information on Hardware and configurations 
+	|
+	|_As this is a virtual file system it can be acessed from any directory
+
+Go to proc directory by cd proc
+
+$ ls proc
+
+Files Shown with 
+*White are normal files containing data 
+*Blue : COntains subdirectories
+*Cyan : Contains  symbolic link 
+
+Important: 
+Numbered Directories: Numbered Directories represents process IDs
+
+Extracting the information of Process IDS
+$ sudo ls /proc/10
+[sudo] password for msk: 
+arch_status  cmdline		 environ  limits     mounts	 oom_score	root	   smaps_rollup  task
+attr	     comm		 exe	  loginuid   mountstats  oom_score_adj	sched	   stack	 timens_offsets
+autogroup    coredump_filter	 fd	  map_files  net	 pagemap	schedstat  stat		 timers
+auxv	     cpu_resctrl_groups  fdinfo   maps	     ns		 patch_state	sessionid  statm	 timerslack_ns
+cgroup	     cpuset		 gid_map  mem	     numa_maps	 personality	setgroups  status	 uid_map
+clear_refs   cwd
+
+
+Extract the information of the process
+-------------------------------------------------------------------
+msk@inspiron:~/MSK/drivers$ sudo cat /proc/10/status
+Name:	rcu_tasks_rude_
+Umask:	0000
+State:	S (sleeping)
+Tgid:	10
+Ngid:	0
+Pid:	10
+PPid:	2
+TracerPid:	0
+Uid:	0	0	0	0
+Gid:	0	0	0	0
+FDSize:	64
+Groups:	 
+NStgid:	10
+NSpid:	10
+NSpgid:	0
+NSsid:	0
+Threads:	1
+SigQ:	0/14518
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	ffffffffffffffff
+SigCgt:	0000000000000000
+CapInh:	0000000000000000
+CapPrm:	000001ffffffffff
+CapEff:	000001ffffffffff
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	conditional enabled
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	2
+nonvoluntary_ctxt_switches:	0
+--------------------------------------------------------------------------------------------
+
+Verify the information is correct or not by checking the process ID
+$ ps -p 10
+    PID TTY          TIME CMD
+     10 ?        00:00:00 rcu_tasks_rude_
+
+--------------------------------------------------------------------------------------------
+
+Another example where each process different status can be monitored through this 
+/proc/10/mem – The memory the process already holds.
+/proc/10/environ – The environment variables set during the initiation of the process.
+/proc/10/cwd – The link to the current working directory (CWD) of the process.
+/proc/10/limits – Stores the values of resource-limits like CPU Time or Memory space.
+/proc/10/fd – The directory which contains file descriptors.
+/proc/10/cmdline – It contains the whole command line for the process.
+-------------------------------------------------------------------------------------------
+
+GEt Memory INformation 
+
+msk@inspiron:~/MSK/drivers$ cat /proc/meminfo 
+MemTotal:        3783652 kB
+MemFree:          421264 kB
+MemAvailable:     768312 kB
+Buffers:           28144 kB
+Cached:           839436 kB
+SwapCached:        61696 kB
+Active:          1132440 kB
+Inactive:        1787812 kB
+Active(anon):     816976 kB
+Inactive(anon):  1584780 kB
+Active(file):     315464 kB
+Inactive(file):   203032 kB
+Unevictable:       83632 kB
+Mlocked:              16 kB
+SwapTotal:       5859324 kB
+SwapFree:        5014196 kB
+Dirty:                48 kB
+Writeback:             0 kB
+AnonPages:       2086356 kB
+Mapped:           356688 kB
+Shmem:            349696 kB
+KReclaimable:      75112 kB
+Slab:             195616 kB
+SReclaimable:      75112 kB
+SUnreclaim:       120504 kB
+KernelStack:       25224 kB
+PageTables:        50572 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     7751148 kB
+Committed_AS:    9445416 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       48348 kB
+VmallocChunk:          0 kB
+Percpu:             3728 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      309100 kB
+DirectMap2M:     3647488 kB
+DirectMap1G:     1048576 kB
+msk@inspiron:~/MSK/drivers$
+---------------------------------------------------------------
+
+GET CPU INFO
+
+msk@inspiron:~/MSK/drivers$ cat /proc/cpuinfo 
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 126
+model name	: Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz
+stepping	: 5
+microcode	: 0xa6
+cpu MHz		: 1200.000
+cache size	: 4096 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 27
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple pml ept_mode_based_exec tsc_scaling
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 2380.80
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 126
+model name	: Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz
+stepping	: 5
+microcode	: 0xa6
+cpu MHz		: 1852.655
+cache size	: 4096 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 27
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple pml ept_mode_based_exec tsc_scaling
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 2380.80
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 126
+model name	: Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz
+stepping	: 5
+microcode	: 0xa6
+cpu MHz		: 1696.586
+cache size	: 4096 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 2
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 27
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple pml ept_mode_based_exec tsc_scaling
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 2380.80
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 126
+model name	: Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz
+stepping	: 5
+microcode	: 0xa6
+cpu MHz		: 1500.168
+cache size	: 4096 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 2
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 27
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple pml ept_mode_based_exec tsc_scaling
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 2380.80
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+msk@inspiron:~/MSK/drivers$ 
+
+----------------------------------------------------------------------------------------
+
+FILES LOCKED BY KERNEL
+msk@inspiron:~/MSK/drivers$ cat /proc/locks
+1: POSIX  ADVISORY  WRITE 2566 08:0b:9700002 1073741826 1073742335
+2: POSIX  ADVISORY  WRITE 2566 08:0b:9569437 1073741826 1073742335
+3: POSIX  ADVISORY  WRITE 2566 08:0b:9973189 1073741826 1073742335
+4: POSIX  ADVISORY  WRITE 2566 08:0b:9569371 1073741826 1073742335
+5: POSIX  ADVISORY  WRITE 2566 08:0b:9569392 1073741826 1073742335
+6: POSIX  ADVISORY  WRITE 2566 08:0b:9440756 1073741826 1073742335
+7: POSIX  ADVISORY  WRITE 2566 08:0b:9437592 1073741826 1073742335
+8: FLOCK  ADVISORY  WRITE 1108 00:1b:5 0 EOF
+9: POSIX  ADVISORY  WRITE 860 00:19:1493 0 EOF
+10: POSIX  ADVISORY  WRITE 2566 08:0b:9700316 1073741826 1073742335
+11: POSIX  ADVISORY  WRITE 2566 08:0b:9569549 1073741826 1073742335
+12: POSIX  ADVISORY  WRITE 2566 08:0b:9437493 1073741826 1073742335
+13: POSIX  ADVISORY  WRITE 2566 08:0b:9437473 1073741826 1073742335
+14: POSIX  ADVISORY  WRITE 2566 08:0b:9437463 1073741826 1073742335
+15: FLOCK  ADVISORY  WRITE 825 00:19:1436 0 EOF
+16: POSIX  ADVISORY  WRITE 2566 08:0b:9440804 1073741826 1073742335
+17: POSIX  ADVISORY  WRITE 2566 08:0b:9437593 1073741826 1073742335
+18: FLOCK  ADVISORY  WRITE 2068 00:39:88 0 EOF
+19: POSIX  ADVISORY  READ 1524 08:0b:9437209 128 128
+20: POSIX  ADVISORY  READ 1524 08:0b:9437203 1073741826 1073742335
+21: POSIX  ADVISORY  WRITE 2566 08:0b:9569750 1073741826 1073742335
+22: POSIX  ADVISORY  WRITE 2566 08:0b:9568663 1073741826 1073742335
+23: POSIX  ADVISORY  WRITE 3018 00:39:115 1 3
+24: POSIX  ADVISORY  WRITE 2566 08:0b:9437464 1073741826 1073742335
+25: POSIX  ADVISORY  WRITE 2566 08:0b:9437447 0 EOF
+msk@inspiron:~/MSK/drivers$ 
+Current locks
+
+Each line contains a single lock. It can be interpreted as:
+
+    1: – The serial number in the locks file.
+    POSIX – The type of lock implementation.
+    ADVISORY – Prevents an attempt to lock the file again.
+    WRITE – The type of lock on the basis of access, either READ or WRITE.
+    2056 – The PID of the process that holds the lock.
+    08:07:5899560 – The identification of the file.
+    0 EOF – The starting and ending point of the locked-region of the file.
+-----------------------------------------------------------------------------------
+
+Cryptographic Modules 
+$ cat /proc/crypto 
+$ cat /proc/crypto | head -20
+name         : ccm(aes)
+driver       : ccm_base(ctr(aes-aesni),cbcmac(aes-aesni))
+module       : ccm
+priority     : 300
+refcnt       : 3
+selftest     : passed
+internal     : no
+type         : aead
+async        : no
+blocksize    : 1
+ivsize       : 16
+maxauthsize  : 16
+geniv        : <none>
+
+name         : ctr(aes)
+driver       : ctr(aes-aesni)
+module       : kernel
+priority     : 300
+refcnt       : 3
+selftest     : passed
+
+--------------------------------------------------------------------------------------
+Other Files in Proc
+
+
+    /proc/interrupts – Contains interrupts for each CPU.
+    /proc/ioports – Stores the list of all Input/Output ports in use.
+    /proc/diskstats – Displays statistics for each disk device.
+    /proc/version – Stores the kernel version.
+    /proc/tty – Sub-directory containing files related to terminal drivers.
+
+----------------------------------------------------------------------------
+
+
